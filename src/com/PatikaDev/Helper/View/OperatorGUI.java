@@ -339,10 +339,9 @@ public class OperatorGUI extends JFrame {
             row_patika_list[i++] = obj.getId();
             row_patika_list[i++] = obj.getName();
             mdl_patika_list.addRow(row_patika_list);
-
-
         }
     }
+
 
     public void loadPatikaCombo(){  // loadPatikaModel() olan her yere yazdık cumku patikalar güncellenirse cmb da güncellenmesi lazım
         cmb_course_patika.removeAllItems();
