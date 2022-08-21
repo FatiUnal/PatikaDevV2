@@ -2,15 +2,16 @@ package com.PatikaDev.Helper.View;
 
 import com.PatikaDev.Helper.Helper.Config;
 import com.PatikaDev.Helper.Helper.Helper;
-import com.PatikaDev.Helper.Model.CheckPatika;
-import com.PatikaDev.Helper.Model.Patika;
-import com.PatikaDev.Helper.Model.Student;
-import com.PatikaDev.Helper.Model.User;
+import com.PatikaDev.Helper.Model.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class StudentGUI extends JFrame {
     private JPanel wrapper;
@@ -25,6 +26,10 @@ public class StudentGUI extends JFrame {
     private Object[] row_student_list;
     private DefaultTableModel mdl_student_checklist;
     private Object[] row_student_checklist;
+    private DefaultTableModel mdl_student_patikalessons;
+    private Object[] row_student_patikalessons;
+    String selectpatikanameforid;
+    int sel_patika_id;
 
 
     public StudentGUI(User user) {
@@ -96,11 +101,70 @@ public class StudentGUI extends JFrame {
         tbl_student_checklist.setModel(mdl_student_checklist);
         tbl_student_checklist.getColumnModel().getColumn(0).setMaxWidth(75);
         tbl_student_checklist.getTableHeader().setReorderingAllowed(false);
+        tbl_student_checklist.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point point = e.getPoint();
+                int select_row = tbl_student_checklist.rowAtPoint(point);
+                tbl_student_checklist.setRowSelectionInterval(select_row,select_row);
+
+                try {
+                    selectpatikanameforid = (String) tbl_student_checklist.getModel().getValueAt(select_row,tbl_student_checklist.columnAtPoint(point));
+                }catch (Exception k){
+                }
+                sel_patika_id =CheckPatika.findID(selectpatikanameforid).getId(); // seçtiğimiz patikanın id sini aldık ki lessonliste eklerken sadece patikanın derslerini ekleyebilelim
+                loadStudentLessonMdl(sel_patika_id);
+                loadStudendCheckMdl();
+
+            }
+        });
+
+
+
+
+
+        // kayıtlı derslerin modeli
+        mdl_student_patikalessons = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0)
+                    return false;
+
+                return super.isCellEditable(row, column);
+            }
+        };
+        Object[] col_student_patikalessons = {"Patika","Ders","Dil"};
+        mdl_student_patikalessons.setColumnIdentifiers(col_student_patikalessons);
+        row_student_patikalessons = new Object[col_student_patikalessons.length];
+        loadStudentLessonMdl(7);
+        loadStudendCheckMdl();
+        tbl_student_patikalessons.setModel(mdl_student_patikalessons);
+        tbl_student_patikalessons.getColumnModel().getColumn(0).setMaxWidth(75);
+        tbl_student_patikalessons.getTableHeader().setReorderingAllowed(false);
+
+
     }
 
 
 
 
+
+
+
+
+    public void loadStudentLessonMdl(int sel_patika_id){
+        DefaultTableModel clearmdl = (DefaultTableModel) tbl_student_patikalessons.getModel();
+        clearmdl.setRowCount(0);
+
+        for (Course obj : CheckPatika.loadPatikasCourseList(sel_patika_id)){
+            int i = 0;
+            row_student_patikalessons[i++] = obj.getPatika_id();
+            row_student_patikalessons[i++] = obj.getName();
+            row_student_patikalessons[i++] = obj.getLang();
+            mdl_student_patikalessons.addRow(row_student_patikalessons);
+        }
+
+    }
 
 
 

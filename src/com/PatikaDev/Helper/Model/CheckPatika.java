@@ -43,6 +43,13 @@ public class CheckPatika {
         return true;
     }
 
+
+
+
+
+
+
+
     public static ArrayList<CheckPatika> privgetList(int user_id){
         CheckPatika obj;
         ArrayList<CheckPatika> checkPatikaList = new ArrayList<>();
@@ -64,6 +71,55 @@ public class CheckPatika {
             e.printStackTrace();
         }
         return checkPatikaList;
+    }
+
+    public static Patika findID(String name){ // burda lessonlistte kullanmak için checklistteki patikanın id sini almayı yazdık
+        Patika obj = null;
+        String query = "SELECT * FROM patika WHERE name = ?";
+
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setString(1,name);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()){
+                obj = new Patika();
+                obj.setId(rs.getInt("id"));
+                obj.setName(rs.getString("name"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return obj;
+    }
+
+    public static ArrayList<Course> loadPatikasCourseList(int patika_id){
+        Course obj;
+        ArrayList<Course> lessonlist = new ArrayList<>();
+        String query = "SELECT * FROM course WHERE patika_id = ?";
+
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setInt(1,patika_id);
+            ResultSet rs = pr.executeQuery();
+
+            while (rs.next()){
+                obj = new Course();
+                obj.setId(rs.getInt("id"));
+                obj.setName(rs.getString("name"));
+                obj.setLang(rs.getString("lang"));
+                obj.setPatika_id(rs.getInt("patika_id"));
+                obj.setUser_id(rs.getInt("user_id"));
+                lessonlist.add(obj);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return lessonlist;
     }
 
 

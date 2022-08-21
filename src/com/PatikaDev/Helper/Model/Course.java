@@ -27,6 +27,8 @@ public class Course {
         this.patika = Patika.getFetch(patika_id);  // Patika nesnesinde bu id de ki dersi tutar
         this.educator = User.getFetch(user_id);   // user nesnesinden user id ye sahip kullanıcıyı tutar
     }
+    public Course(){
+    }
 
     public static boolean add(int user_id, int patika_id, String name, String lang) {
         String query = "INSERT INTO course (user_id,patika_id,name,lang) VALUES (?,?,?,?)";
